@@ -7,6 +7,8 @@ import Inventory from './features/inventory/Inventory';
 import Employees from './features/employees/Employees';
 import PCBManagement from './features/pcb/PCBManagement';
 import PCBProductionEntry from './features/pcb/PCBProductionEntry';
+import AnalyticsDashboard from './features/analytics/AnalyticsDashboard';
+import ExcelImportExport from './features/analytics/ExcelImportExport';
 import { ROUTES, ROLES } from './constants';
 
 function App() {
@@ -67,6 +69,32 @@ function App() {
             <Layout>
               <PCBProductionEntry />
             </Layout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.ANALYTICS}
+        element={
+          <PrivateRoute>
+            <RoleBasedRoute allowedRoles={[ROLES.ADMIN]}>
+              <Layout>
+                <AnalyticsDashboard />
+              </Layout>
+            </RoleBasedRoute>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.IMPORT_EXPORT}
+        element={
+          <PrivateRoute>
+            <RoleBasedRoute allowedRoles={[ROLES.ADMIN]}>
+              <Layout>
+                <ExcelImportExport />
+              </Layout>
+            </RoleBasedRoute>
           </PrivateRoute>
         }
       />
