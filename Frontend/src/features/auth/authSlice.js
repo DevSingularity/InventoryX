@@ -26,7 +26,10 @@ export const login = createAsyncThunk(
       storage.set(APP_CONFIG.USER_KEY, data.user);
       return data;
     } catch (error) {
-      const message = error.message || 'Something went wrong';
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Something went wrong';
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -39,7 +42,10 @@ export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
     storage.remove(APP_CONFIG.TOKEN_KEY);
     storage.remove(APP_CONFIG.USER_KEY);
   } catch (error) {
-    const message = error.message || 'Something went wrong';
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      'Something went wrong';
     return thunkAPI.rejectWithValue(message);
   }
 });
@@ -53,7 +59,7 @@ export const validateToken = createAsyncThunk(
       if (!token) {
         throw new Error('No token found');
       }
-      const isValid = await authService.validateToken(token);
+      const isValid = await authService.validateToken();
       if (!isValid) {
         throw new Error('Invalid token');
       }
@@ -61,7 +67,10 @@ export const validateToken = createAsyncThunk(
     } catch (error) {
       storage.remove(APP_CONFIG.TOKEN_KEY);
       storage.remove(APP_CONFIG.USER_KEY);
-      const message = error.message || 'Token validation failed';
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Token validation failed';
       return thunkAPI.rejectWithValue(message);
     }
   }

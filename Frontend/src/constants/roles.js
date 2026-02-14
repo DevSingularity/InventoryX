@@ -1,6 +1,6 @@
 export const ROLES = {
-  ADMIN: 'ADMIN',
-  EMPLOYEE: 'EMPLOYEE',
+  ADMIN: 'admin',
+  EMPLOYEE: 'employee',
 };
 
 export const ROLE_PERMISSIONS = {

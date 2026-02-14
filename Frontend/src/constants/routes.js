@@ -9,6 +9,7 @@ export const ROUTES = {
 
   // PCB Management
   PCB_MANAGEMENT: '/pcbs',
+  PCBS: '/pcbs',
   PCB_PRODUCTION: '/pcb-production',
   PCB_DETAILS: '/pcbs/:id',
 

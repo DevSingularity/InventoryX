@@ -24,7 +24,20 @@ export const getComponentConsumptionSummary = async () => {
 };
 
 export const getTopConsumedComponents = async () => {
-  const result = await query('SELECT * FROM v_top_consumed_components');
+  const result = await query(
+    `SELECT
+      c.component_name,
+      c.part_number,
+      c.current_stock_quantity,
+      c.is_low_stock,
+      COALESCE(SUM(cc.quantity_consumed), 0) AS total_consumed,
+      COUNT(DISTINCT DATE(cc.consumption_date)) AS consumption_days,
+      COALESCE(AVG(cc.quantity_consumed), 0) AS avg_consumption_per_transaction
+     FROM components c
+     LEFT JOIN component_consumption cc ON c.id = cc.component_id
+     GROUP BY c.id, c.component_name, c.part_number, c.current_stock_quantity, c.is_low_stock
+     ORDER BY total_consumed DESC`
+  );
   return result.rows;
 };
 

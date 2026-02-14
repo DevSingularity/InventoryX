@@ -52,7 +52,7 @@ function App() {
       />
 
       <Route
-        path={ROUTES.PCBS}
+        path={ROUTES.PCB_MANAGEMENT}
         element={
           <PrivateRoute>
             <Layout>

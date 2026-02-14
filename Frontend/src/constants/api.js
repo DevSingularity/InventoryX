@@ -2,15 +2,15 @@ export const API_ENDPOINTS = {
   // Auth
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
-  REFRESH: '/auth/refresh',
+  ME: '/auth/me',
   
   // Inventory
-  INVENTORY: '/inventory',
-  INVENTORY_ITEM: (id) => `/inventory/${id}`,
+  INVENTORY: '/components',
+  INVENTORY_ITEM: (id) => `/components/${id}`,
   
   // Employees
-  EMPLOYEES: '/employees',
-  EMPLOYEE: (id) => `/employees/${id}`,
+  EMPLOYEES: '/users',
+  EMPLOYEE: (id) => `/users/${id}`,
   
   // Dashboard
   DASHBOARD_STATS: '/dashboard/stats',

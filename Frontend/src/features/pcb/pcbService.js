@@ -1,17 +1,15 @@
 import api from '../../services/api';
 
 const PCB_ENDPOINTS = {
-    LIST: '/api/pcbs',
-    CREATE: '/api/pcbs',
-    UPDATE: (id) => `/api/pcbs/${id}`,
-    DELETE: (id) => `/api/pcbs/${id}`,
-    GET: (id) => `/api/pcbs/${id}`,
-    COMPONENTS: (id) => `/api/pcbs/${id}/components`,
-    ADD_COMPONENT: (id) => `/api/pcbs/${id}/components`,
-    UPDATE_COMPONENT: (pcbId, componentId) => `/api/pcbs/${pcbId}/components/${componentId}`,
-    REMOVE_COMPONENT: (pcbId, componentId) => `/api/pcbs/${pcbId}/components/${componentId}`,
-    PRODUCTION: '/api/pcb-production',
-    PRODUCTION_DETAIL: (id) => `/api/pcb-production/${id}`,
+    LIST: '/pcbs',
+    CREATE: '/pcbs',
+    UPDATE: (id) => `/pcbs/${id}`,
+    DELETE: (id) => `/pcbs/${id}`,
+    GET: (id) => `/pcbs/${id}`,
+    COMPONENTS: (id) => `/pcbs/${id}/components`,
+    ADD_COMPONENT: (id) => `/pcbs/${id}/components`,
+    REMOVE_COMPONENT: (pcbId, componentId) => `/pcbs/${pcbId}/components/${componentId}`,
+    PRODUCTION: '/production',
 };
 
 class PCBService {
@@ -32,7 +30,7 @@ class PCBService {
     }
 
     async updatePCB(id, pcbData) {
-        const response = await api.put(PCB_ENDPOINTS.UPDATE(id), pcbData);
+        const response = await api.patch(PCB_ENDPOINTS.UPDATE(id), pcbData);
         return response.data;
     }
 
@@ -52,14 +50,6 @@ class PCBService {
         return response.data;
     }
 
-    async updatePCBComponent(pcbId, componentId, componentData) {
-        const response = await api.put(
-            PCB_ENDPOINTS.UPDATE_COMPONENT(pcbId, componentId),
-            componentData
-        );
-        return response.data;
-    }
-
     async removePCBComponent(pcbId, componentId) {
         const response = await api.delete(PCB_ENDPOINTS.REMOVE_COMPONENT(pcbId, componentId));
         return response.data;
@@ -73,11 +63,6 @@ class PCBService {
 
     async getAllProductions(params = {}) {
         const response = await api.get(PCB_ENDPOINTS.PRODUCTION, { params });
-        return response.data;
-    }
-
-    async getProductionById(id) {
-        const response = await api.get(PCB_ENDPOINTS.PRODUCTION_DETAIL(id));
         return response.data;
     }
 }
