@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { simulateApiDelay } from '../../services/api';
-import { mockInventory, mockEmployees } from '../../mockData';
+import api from '../../services/api';
 
 const initialState = {
   stats: {
@@ -19,17 +18,21 @@ export const getDashboardStats = createAsyncThunk(
   'dashboard/getStats',
   async (_, thunkAPI) => {
     try {
-      await simulateApiDelay(null);
-      
-      const totalItems = mockInventory.length;
-      const lowStockItems = mockInventory.filter(
-        (item) => item.stock < item.monthlyRequired * 0.2
-      ).length;
-      const outOfStock = mockInventory.filter((item) => item.stock === 0).length;
-      const totalEmployees = mockEmployees.filter(
-        (emp) => emp.status === 'active'
-      ).length;
-      
+      const [statsRes, componentsRes, usersRes] = await Promise.all([
+        api.get('/dashboard/stats'),
+        api.get('/components'),
+        api.get('/users'),
+      ]);
+
+      const stats = statsRes.data;
+      const components = componentsRes.data || [];
+      const users = usersRes.data || [];
+
+      const totalItems = stats.total_components || 0;
+      const lowStockItems = stats.low_stock_components || 0;
+      const outOfStock = components.filter((item) => Number(item.current_stock_quantity) === 0).length;
+      const totalEmployees = users.filter((user) => user.is_active).length;
+
       return {
         totalItems,
         lowStockItems,

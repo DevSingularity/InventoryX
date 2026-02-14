@@ -1,74 +1,69 @@
-import { simulateApiDelay } from '../../services/api';
-import { mockInventory } from '../../mockData';
+import api from '../../services/api';
 
-let inventoryData = [...mockInventory];
+const toUiItem = (item) => ({
+  id: item.id,
+  name: item.component_name,
+  partNumber: item.part_number,
+  stock: item.current_stock_quantity,
+  monthlyRequired: item.monthly_required_quantity,
+  unit: item.unit_of_measurement || 'pcs',
+  category: '',
+  supplier: '',
+  location: '',
+  reorderLevel: item.reorder_threshold ?? 0,
+  lastUpdated: item.updated_at || item.created_at,
+});
+
+const toApiPayload = (itemData) => ({
+  component_name: itemData.name,
+  part_number: itemData.partNumber,
+  description: itemData.description || null,
+  current_stock_quantity: Number(itemData.stock ?? 0),
+  monthly_required_quantity: Number(itemData.monthlyRequired ?? 0),
+  unit_of_measurement: itemData.unit || 'pcs',
+  reorder_threshold: Number(itemData.reorderLevel ?? 0),
+});
 
 class InventoryService {
   async getAllInventory() {
-    await simulateApiDelay(null);
-    return inventoryData;
+    const response = await api.get('/components');
+    return response.data.map(toUiItem);
   }
   
   async getInventoryItem(id) {
-    await simulateApiDelay(null);
-    const item = inventoryData.find((item) => item.id === id);
-    if (!item) {
-      throw new Error('Item not found');
-    }
-    return item;
+    const response = await api.get(`/components/${id}`);
+    return toUiItem(response.data);
   }
   
   async createInventoryItem(itemData) {
-    await simulateApiDelay(null);
-    const newItem = {
-      ...itemData,
-      id: Date.now().toString(),
-      lastUpdated: new Date().toISOString().split('T')[0],
-    };
-    inventoryData.push(newItem);
-    return newItem;
+    const response = await api.post('/components', toApiPayload(itemData));
+    return toUiItem(response.data);
   }
   
   async updateInventoryItem(id, itemData) {
-    await simulateApiDelay(null);
-    const index = inventoryData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      throw new Error('Item not found');
-    }
-    inventoryData[index] = {
-      ...inventoryData[index],
-      ...itemData,
-      lastUpdated: new Date().toISOString().split('T')[0],
-    };
-    return inventoryData[index];
+    const response = await api.patch(`/components/${id}`, toApiPayload(itemData));
+    return toUiItem(response.data);
   }
   
   async deleteInventoryItem(id) {
-    await simulateApiDelay(null);
-    const index = inventoryData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      throw new Error('Item not found');
-    }
-    inventoryData.splice(index, 1);
+    await api.delete(`/components/${id}`);
     return { id };
   }
   
   async updateStock(id, quantity) {
-    await simulateApiDelay(null);
-    const index = inventoryData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      throw new Error('Item not found');
-    }
-    inventoryData[index].stock = quantity;
-    inventoryData[index].lastUpdated = new Date().toISOString().split('T')[0];
-    return inventoryData[index];
+    const response = await api.post(`/components/${id}/adjust-stock`, {
+      adjustment_type: 'correction',
+      quantity: Number(quantity),
+      reason: 'Updated from inventory UI',
+    });
+    return toUiItem(response.data.component);
   }
   
   async getLowStockItems() {
-    await simulateApiDelay(null);
-    return inventoryData.filter(
-      (item) => item.stock < item.monthlyRequired * 0.2
-    );
+    const response = await api.get('/components', {
+      params: { lowStock: true },
+    });
+    return response.data.map(toUiItem);
   }
 }
 
