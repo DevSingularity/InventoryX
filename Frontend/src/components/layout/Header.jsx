@@ -1,4 +1,4 @@
-import { LogOut, User, LayoutDashboard, Package, Users, Cpu, Factory } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Package, Users, Cpu, Factory, BarChart2, FileSpreadsheet } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth, useRole } from '../../hooks';
 import { APP_CONFIG, ROUTES } from '../../constants';
@@ -58,16 +58,38 @@ const Header = () => {
                 Production
               </NavLink>
               {isAdmin && (
-                <NavLink
-                  to={ROUTES.EMPLOYEES}
-                  className={({ isActive }) =>
-                    `flex items-center gap-2 text-sm font-medium transition-colors ${isActive ? 'text-primary' : 'text-secondary-600 hover:text-primary'
-                    }`
-                  }
-                >
-                  <Users size={18} />
-                  Employees
-                </NavLink>
+                <>
+                  <NavLink
+                    to={ROUTES.ANALYTICS}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 text-sm font-medium transition-colors ${isActive ? 'text-primary' : 'text-secondary-600 hover:text-primary'
+                      }`
+                    }
+                  >
+                    <BarChart2 size={18} />
+                    Analytics
+                  </NavLink>
+                  <NavLink
+                    to={ROUTES.IMPORT_EXPORT}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 text-sm font-medium transition-colors ${isActive ? 'text-primary' : 'text-secondary-600 hover:text-primary'
+                      }`
+                    }
+                  >
+                    <FileSpreadsheet size={18} />
+                    Data
+                  </NavLink>
+                  <NavLink
+                    to={ROUTES.EMPLOYEES}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 text-sm font-medium transition-colors ${isActive ? 'text-primary' : 'text-secondary-600 hover:text-primary'
+                      }`
+                    }
+                  >
+                    <Users size={18} />
+                    Employees
+                  </NavLink>
+                </>
               )}
             </nav>
           </div>

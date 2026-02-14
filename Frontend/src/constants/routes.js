@@ -5,6 +5,8 @@ export const ROUTES = {
   EMPLOYEES: '/employees',
   PCBS: '/pcbs',
   PRODUCTION: '/production',
+  ANALYTICS: '/analytics',
+  IMPORT_EXPORT: '/import-export',
   NOT_FOUND: '*',
 };
 
