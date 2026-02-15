@@ -1,17 +1,22 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Plus } from 'lucide-react';
-import { Button, Modal, Alert, SearchBar, LoadingSpinner } from '../../components/ui';
-import InventoryForm from './components/InventoryForm';
-import InventoryTable from './components/InventoryTable';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   getAllInventory,
   createInventoryItem,
   updateInventoryItem,
   deleteInventoryItem,
   reset,
-  clearError,
+  clearError
 } from './inventorySlice';
+import { RotateCw, Plus } from 'lucide-react';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import Alert from '../../components/ui/Alert';
+import SearchBar from '../../components/ui/SearchBar';
+import Button from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import InventoryTable from './components/InventoryTable';
+import InventoryForm from './components/InventoryForm';
 import { useDebounce } from '../../hooks';
 import { filterData } from '../../helpers';
 
@@ -26,6 +31,12 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('success');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await dispatch(getAllInventory());
+    setIsRefreshing(false);
+  };
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -122,14 +133,30 @@ const Inventory = () => {
           placeholder="Search inventory..."
           className="w-full md:w-96"
         />
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          variant="primary"
-          className="flex items-center gap-2 w-full md:w-auto"
-        >
-          <Plus size={20} />
-          Add Item
-        </Button>
+        <div className="flex gap-2 w-full md:w-auto">
+          <Button
+            onClick={handleRefresh}
+            variant="secondary"
+            className="flex items-center gap-2"
+            disabled={isRefreshing}
+            aria-label="Refresh Data"
+          >
+            {isRefreshing ? (
+              <span className="animate-spin"><RotateCw size={18} /></span>
+            ) : (
+              <RotateCw size={18} />
+            )}
+            Refresh Data
+          </Button>
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            variant="primary"
+            className="flex items-center gap-2"
+          >
+            <Plus size={20} />
+            Add Item
+          </Button>
+        </div>
       </div>
 
       <InventoryTable
