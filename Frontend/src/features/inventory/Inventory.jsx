@@ -1,17 +1,23 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Plus } from 'lucide-react';
-import { Button, Modal, Alert, SearchBar, LoadingSpinner } from '../../components/ui';
-import InventoryForm from './components/InventoryForm';
-import InventoryTable from './components/InventoryTable';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   getAllInventory,
   createInventoryItem,
   updateInventoryItem,
   deleteInventoryItem,
+  updateStock,
   reset,
-  clearError,
+  clearError
 } from './inventorySlice';
+import { RotateCw, Plus } from 'lucide-react';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import Alert from '../../components/ui/Alert';
+import SearchBar from '../../components/ui/SearchBar';
+import Button from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import InventoryTable from './components/InventoryTable';
+import InventoryForm from './components/InventoryForm';
 import { useDebounce } from '../../hooks';
 import { filterData } from '../../helpers';
 
@@ -23,9 +29,18 @@ const Inventory = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false);
+  const [stockEditingItem, setStockEditingItem] = useState(null);
+  const [newStock, setNewStock] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('success');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await dispatch(getAllInventory());
+    setIsRefreshing(false);
+  };
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -80,6 +95,19 @@ const Inventory = () => {
     setIsModalOpen(true);
   };
 
+  const handleStockEdit = (item) => {
+    setStockEditingItem(item);
+    setNewStock(item.stock.toString());
+    setIsStockModalOpen(true);
+  };
+
+  const handleStockUpdate = async (e) => {
+    e.preventDefault();
+    await dispatch(updateStock({ id: stockEditingItem.id, quantity: parseInt(newStock) }));
+    setIsStockModalOpen(false);
+    setStockEditingItem(null);
+  };
+
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this item?')) {
       await dispatch(deleteInventoryItem(id));
@@ -122,20 +150,37 @@ const Inventory = () => {
           placeholder="Search inventory..."
           className="w-full md:w-96"
         />
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          variant="primary"
-          className="flex items-center gap-2 w-full md:w-auto"
-        >
-          <Plus size={20} />
-          Add Item
-        </Button>
+        <div className="flex gap-2 w-full md:w-auto">
+          <Button
+            onClick={handleRefresh}
+            variant="secondary"
+            className="flex items-center gap-2"
+            disabled={isRefreshing}
+            aria-label="Refresh Data"
+          >
+            {isRefreshing ? (
+              <span className="animate-spin"><RotateCw size={18} /></span>
+            ) : (
+              <RotateCw size={18} />
+            )}
+            Refresh Data
+          </Button>
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            variant="primary"
+            className="flex items-center gap-2"
+          >
+            <Plus size={20} />
+            Add Item
+          </Button>
+        </div>
       </div>
 
       <InventoryTable
         items={filteredItems}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onStockEdit={handleStockEdit}
       />
 
       <Modal
@@ -149,6 +194,41 @@ const Inventory = () => {
           onSubmit={editingItem ? handleUpdate : handleCreate}
           onCancel={handleCloseModal}
         />
+      </Modal>
+
+      <Modal
+        isOpen={isStockModalOpen}
+        onClose={() => setIsStockModalOpen(false)}
+        title="Update Stock Quantity"
+        size="sm"
+      >
+        <form onSubmit={handleStockUpdate} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Stock Quantity ({stockEditingItem?.unit})
+            </label>
+            <input
+              type="number"
+              value={newStock}
+              onChange={(e) => setNewStock(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:ring-primary-500 focus:border-primary-500"
+              required
+              min="0"
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsStockModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary">
+              Update Stock
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
