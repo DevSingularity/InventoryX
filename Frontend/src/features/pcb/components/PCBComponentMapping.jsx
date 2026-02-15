@@ -44,6 +44,7 @@ const PCBComponentMapping = ({ pcb }) => {
     const [selectedComponent, setSelectedComponent] = useState(null);
     const [quantity, setQuantity] = useState('');
     const [notes, setNotes] = useState('');
+    const [pendingComponent, setPendingComponent] = useState(null);
 
     useEffect(() => {
         if (pcb?.id) {
@@ -53,10 +54,21 @@ const PCBComponentMapping = ({ pcb }) => {
     }, [pcb?.id, dispatch]);
 
     useEffect(() => {
-        if (success) {
+        if (success && pendingComponent) {
             setOpenDialog(false);
             resetForm();
-            setTimeout(() => dispatch(clearSuccess()), 3000);
+            // We keep pendingComponent so the alert can render it
+        }
+    }, [success, pendingComponent]);
+
+    useEffect(() => {
+        if (success) {
+            const timer = setTimeout(() => {
+                dispatch(clearSuccess());
+                // Only clear pendingComponent when success is cleared
+                setPendingComponent(null);
+            }, 5000);
+            return () => clearTimeout(timer);
         }
     }, [success, dispatch]);
 
@@ -82,6 +94,8 @@ const PCBComponentMapping = ({ pcb }) => {
         if (!selectedComponent || !quantity || parseInt(quantity) <= 0) {
             return;
         }
+
+        setPendingComponent(selectedComponent.name || selectedComponent.component_name);
 
         dispatch(
             addComponentToPCB({
@@ -119,9 +133,16 @@ const PCBComponentMapping = ({ pcb }) => {
                 </Alert>
             )}
 
-            {success && (
-                <Alert severity="success" sx={{ mb: 2 }} onClose={() => dispatch(clearSuccess())}>
-                    Component mapping updated successfully!
+            {success && pendingComponent && (
+                <Alert
+                    severity="success"
+                    sx={{ mb: 2 }}
+                    onClose={() => {
+                        dispatch(clearSuccess());
+                        setPendingComponent(null);
+                    }}
+                >
+                    Component "{pendingComponent}" successfully added to BOM of PCB "{pcb?.pcb_name || pcb?.pcb_code}"
                 </Alert>
             )}
 
@@ -249,17 +270,17 @@ const PCBComponentMapping = ({ pcb }) => {
                                     renderOption={(props, option) => {
                                         const { key, ...restProps } = props;
                                         return (
-                                        <Box component="li" key={key} {...restProps}>
-                                            <Box>
-                                                <Typography variant="body2">
-                                                    <strong>{option.partNumber || option.part_number}</strong> - {option.name || option.component_name}
-                                                </Typography>
-                                                <Typography variant="caption" color="textSecondary">
-                                                    Stock: {option.stock ?? option.current_stock_quantity ?? 0} |
-                                                    Required/month: {option.monthlyRequired ?? option.monthly_required_quantity ?? 0}
-                                                </Typography>
+                                            <Box component="li" key={key} {...restProps}>
+                                                <Box>
+                                                    <Typography variant="body2">
+                                                        <strong>{option.partNumber || option.part_number}</strong> - {option.name || option.component_name}
+                                                    </Typography>
+                                                    <Typography variant="caption" color="textSecondary">
+                                                        Stock: {option.stock ?? option.current_stock_quantity ?? 0} |
+                                                        Required/month: {option.monthlyRequired ?? option.monthly_required_quantity ?? 0}
+                                                    </Typography>
+                                                </Box>
                                             </Box>
-                                        </Box>
                                         );
                                     }}
                                 />

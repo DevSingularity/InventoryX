@@ -55,12 +55,14 @@ const PCBManagement = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (success) {
+        if (success && openDialog) {
             setOpenDialog(false);
             resetForm();
-            setTimeout(() => dispatch(clearSuccess()), 3000);
+            setTimeout(() => {
+                dispatch(clearSuccess());
+            }, 3000);
         }
-    }, [success, dispatch]);
+    }, [success, openDialog, dispatch]);
 
     useEffect(() => {
         if (error) {
@@ -129,6 +131,7 @@ const PCBManagement = () => {
     const handleCloseMapping = () => {
         setOpenMappingDialog(false);
         setSelectedPCB(null);
+        setLastAddedComponent(null);
     };
 
     const columns = [
@@ -213,7 +216,7 @@ const PCBManagement = () => {
                 </Alert>
             )}
 
-            {success && (
+            {success && openDialog && (
                 <Alert severity="success" sx={{ mb: 2 }} onClose={() => dispatch(clearSuccess())}>
                     Operation completed successfully!
                 </Alert>
@@ -301,7 +304,11 @@ const PCBManagement = () => {
                     Bill of Materials - {selectedPCB?.pcb_name}
                 </DialogTitle>
                 <DialogContent>
-                    {selectedPCB && <PCBComponentMapping pcb={selectedPCB} />}
+                    {selectedPCB && (
+                        <PCBComponentMapping
+                            pcb={selectedPCB}
+                        />
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseMapping}>Close</Button>
