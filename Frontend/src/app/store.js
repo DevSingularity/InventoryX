@@ -7,6 +7,7 @@ import employeeReducer from '../features/employees/employeeSlice';
 import dashboardReducer from '../features/dashboard/dashboardSlice';
 import pcbReducer from '../features/pcb/pcbSlice';
 import analyticsReducer from '../features/analytics/analyticsSlice';
+import notificationReducer from '../features/notifications/notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     pcbs: pcbReducer,
     analytics: analyticsReducer,
+    notifications: notificationReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
