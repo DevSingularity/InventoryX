@@ -1,0 +1,391 @@
+/* ExcelImportExport.module.css */
+
+/* --- Layout & Spacing --- */
+.container {
+    padding: 48px 24px;
+    background-color: #F8FAFC;
+    /* Neutral background */
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #111827;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 1200px;
+    /* Constrain width for better readability on large screens */
+    margin: 0 auto;
+}
+
+.cardsRow {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .cardsRow {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* --- Header Component --- */
+.headerContainer {
+    margin-bottom: 48px;
+    text-align: left;
+}
+
+.pageTitle {
+    font-size: 28px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+}
+
+.pageSubtitle {
+    font-size: 14px;
+    color: #6B7280;
+    margin: 0;
+}
+
+.headerDivider {
+    margin-top: 16px;
+    border-top: 1px solid #E5E7EB;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* --- Action Card Component --- */
+.actionCard {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.actionCard:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    /* Subtle elevation */
+    transform: translateY(-1px);
+}
+
+.iconContainer {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.iconContainerBlue {
+    background-color: #EFF6FF;
+    /* blue-50 */
+    color: #1D4ED8;
+    /* blue-700 */
+}
+
+.iconContainerGreen {
+    background-color: #F0FDF4;
+    /* green-50 */
+    color: #15803D;
+    /* green-700 */
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 8px 0;
+}
+
+.cardDescription {
+    font-size: 14px;
+    color: #6B7280;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+    flex-grow: 1;
+    /* Pushes button to bottom */
+}
+
+.actionButton {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.primaryButton {
+    background-color: #1D4ED8;
+    /* Deep blue */
+    color: #FFFFFF;
+}
+
+.primaryButton:hover {
+    background-color: #1E40AF;
+}
+
+.successButton {
+    background-color: #15803D;
+    /* Deep green */
+    color: #FFFFFF;
+}
+
+.successButton:hover {
+    background-color: #166534;
+}
+
+/* --- Guidelines Section --- */
+.guidelinesContainer {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.guidelinesTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 24px 0;
+}
+
+.guidelinesList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .guidelinesList {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}
+
+.guidelineItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+}
+
+.checkIcon {
+    margin-top: 2px;
+    color: #15803D;
+    /* Green-700 */
+    flex-shrink: 0;
+}
+
+.guidelineContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.guidelineHeading {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.guidelineText {
+    font-size: 13px;
+    color: #6B7280;
+    line-height: 1.4;
+}
+
+/* --- Modal Styles --- */
+/* Note: Using React Portal or similar, but these classes will be applied inside the Dialog content */
+
+.modalHeader {
+    margin-bottom: 24px;
+}
+
+.modalTitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 16px 0;
+}
+
+.modalDivider {
+    height: 1px;
+    background-color: #E5E7EB;
+    width: 100%;
+}
+
+.importTypeGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+@media (min-width: 640px) {
+    .importTypeGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.typeCard {
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.typeCard:hover {
+    border-color: #CBD5E1;
+    background-color: #F8FAFC;
+}
+
+.typeCardSelected {
+    border-color: #3B82F6;
+    /* Blue-500 */
+    background-color: #EFF6FF;
+    /* Blue-50 */
+    box-shadow: 0 0 0 1px #3B82F6;
+}
+
+.typeCardTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0F172A;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.typeCardDesc {
+    font-size: 13px;
+    color: #64748B;
+    line-height: 1.4;
+}
+
+.uploadZone {
+    border: 2px dashed #CBD5E1;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    background-color: #F8FAFC;
+    transition: border-color 0.2s ease;
+    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.uploadZone:hover {
+    border-color: #94A3B8;
+}
+
+.uploadText {
+    font-size: 14px;
+    color: #64748B;
+}
+
+.chooseFileButton {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.chooseFileButton:hover {
+    border-color: #CBD5E1;
+    background-color: #F1F5F9;
+}
+
+.selectedFileChip {
+    background-color: #E0F2FE;
+    color: #0369A1;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    border-top: 1px solid #E5E7EB;
+    padding-top: 16px;
+}
+
+.cancelButton {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748B;
+    cursor: pointer;
+}
+
+.cancelButton:hover {
+    background-color: #F1F5F9;
+    color: #0F172A;
+}
+
+.importActionButton {
+    background-color: #1D4ED8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.importActionButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.importActionButton:not(:disabled):hover {
+    background-color: #1E40AF;
+}

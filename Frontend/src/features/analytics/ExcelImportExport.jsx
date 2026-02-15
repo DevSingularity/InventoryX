@@ -1,39 +1,24 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-    Box,
-    Button,
-    Typography,
-    Paper,
-    Alert,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Grid,
-    Card,
-    CardContent,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Divider,
-    CircularProgress,
-    Chip,
-} from '@mui/material';
 import {
     Upload as UploadIcon,
     Download as DownloadIcon,
-    CheckCircle,
-    Description,
-    Assessment,
 } from '@mui/icons-material';
+import { Alert } from '@mui/material';
+
 import api from '../../services/api';
+import styles from './styles/ExcelImportExport.module.css';
+
+import ImportExportHeader from './components/ImportExportHeader';
+import ActionCard from './components/ActionCard';
+import GuidelinesSection from './components/GuidelinesSection';
+import ImportModal from './components/ImportModal';
+import ExportModal from './components/ExportModal';
 
 const ExcelImportExport = () => {
-    const dispatch = useDispatch();
-    const fileInputRef = useRef();
+    // const dispatch = useDispatch(); // Not used in original logic, but kept in imports just in case
 
+    // State
     const [openImportDialog, setOpenImportDialog] = useState(false);
     const [openExportDialog, setOpenExportDialog] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -42,6 +27,7 @@ const ExcelImportExport = () => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
 
+    // Handlers
     const handleFileSelect = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -81,9 +67,8 @@ const ExcelImportExport = () => {
 
             setResult(response.data);
             setSelectedFile(null);
-            if (fileInputRef.current) {
-                fileInputRef.current.value = '';
-            }
+            // File input ref reset is handled inside Modal if needed, or by causing re-render
+            setOpenImportDialog(false); // Close dialog on success
         } catch (err) {
             setError(err.response?.data?.message || 'Error importing file');
         } finally {
@@ -113,6 +98,7 @@ const ExcelImportExport = () => {
                 success: true,
                 message: `${exportType} exported successfully`,
             });
+            // setOpenExportDialog(false); // Optional: close dialog after export
         } catch (err) {
             setError(err.response?.data?.message || 'Error exporting data');
         } finally {
@@ -120,273 +106,76 @@ const ExcelImportExport = () => {
         }
     };
 
-    const importOptions = [
-        {
-            type: 'components',
-            title: 'Component Inventory',
-            description: 'Import component master data with part numbers, quantities, and requirements',
-            icon: <Description color="primary" />,
-        },
-        {
-            type: 'pcb_production',
-            title: 'PCB Production Data',
-            description: 'Import production records with batch numbers and quantities',
-            icon: <Assessment color="primary" />,
-        },
-    ];
-
-    const exportOptions = [
-        {
-            type: 'components',
-            title: 'Component Inventory',
-            description: 'Export all component data including stock levels and consumption',
-        },
-        {
-            type: 'consumption-report',
-            title: 'Consumption Report',
-            description: 'Export detailed consumption history and analytics',
-        },
-        {
-            type: 'low-stock-report',
-            title: 'Low Stock Report',
-            description: 'Export components with low stock levels',
-        },
-        {
-            type: 'pcb-production',
-            title: 'PCB Production Report',
-            description: 'Export production history and statistics',
-        },
-    ];
-
     return (
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-                Excel Import & Export
-            </Typography>
+        <div className={styles.container}>
+            <div className={styles.gridContainer}>
 
-            {error && (
-                <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
-                    {error}
-                </Alert>
-            )}
+                <ImportExportHeader />
 
-            {result && (
-                <Alert
-                    severity={result.success ? 'success' : 'error'}
-                    sx={{ mb: 2 }}
-                    onClose={() => setResult(null)}
-                >
-                    {result.message}
-                    {result.records_imported > 0 && (
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                            Records imported: {result.records_imported}
-                            {result.records_failed > 0 && ` | Failed: ${result.records_failed}`}
-                        </Typography>
-                    )}
-                </Alert>
-            )}
+                {error && (
+                    <Alert severity="error" onClose={() => setError(null)} sx={{ borderRadius: '8px' }}>
+                        {error}
+                    </Alert>
+                )}
 
-            <Grid container spacing={3}>
-                {/* Import Section */}
-                <Grid item xs={12} md={6}>
-                    <Paper sx={{ p: 3 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <UploadIcon sx={{ mr: 1, fontSize: 32, color: 'primary.main' }} />
-                            <Typography variant="h5">Import Data</Typography>
-                        </Box>
-                        <Typography variant="body2" color="textSecondary" paragraph>
-                            Upload Excel files to import component inventory or production data.
-                        </Typography>
-
-                        <Button
-                            variant="contained"
-                            startIcon={<UploadIcon />}
-                            onClick={() => setOpenImportDialog(true)}
-                            fullWidth
-                            size="large"
-                        >
-                            Import from Excel
-                        </Button>
-                    </Paper>
-                </Grid>
-
-                {/* Export Section */}
-                <Grid item xs={12} md={6}>
-                    <Paper sx={{ p: 3 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <DownloadIcon sx={{ mr: 1, fontSize: 32, color: 'success.main' }} />
-                            <Typography variant="h5">Export Data</Typography>
-                        </Box>
-                        <Typography variant="body2" color="textSecondary" paragraph>
-                            Download inventory and consumption reports in Excel format.
-                        </Typography>
-
-                        <Button
-                            variant="contained"
-                            color="success"
-                            startIcon={<DownloadIcon />}
-                            onClick={() => setOpenExportDialog(true)}
-                            fullWidth
-                            size="large"
-                        >
-                            Export to Excel
-                        </Button>
-                    </Paper>
-                </Grid>
-
-                {/* Import Guidelines */}
-                <Grid item xs={12}>
-                    <Paper sx={{ p: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Import Guidelines
-                        </Typography>
-                        <List dense>
-                            <ListItem>
-                                <ListItemIcon>
-                                    <CheckCircle color="success" />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="Component Import"
-                                    secondary="Required columns: Component Name, Part Number, Current Stock Quantity, Monthly Required Quantity"
-                                />
-                            </ListItem>
-                            <ListItem>
-                                <ListItemIcon>
-                                    <CheckCircle color="success" />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="PCB Production Import"
-                                    secondary="Required columns: PCB Code, Quantity Produced, Production Date, Batch Number"
-                                />
-                            </ListItem>
-                            <ListItem>
-                                <ListItemIcon>
-                                    <CheckCircle color="success" />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="File Format"
-                                    secondary="Supported formats: .xlsx, .xls | Maximum file size: 10MB"
-                                />
-                            </ListItem>
-                        </List>
-                    </Paper>
-                </Grid>
-            </Grid>
-
-            {/* Import Dialog */}
-            <Dialog open={openImportDialog} onClose={() => setOpenImportDialog(false)} maxWidth="md" fullWidth>
-                <DialogTitle>Import from Excel</DialogTitle>
-                <DialogContent>
-                    <Box sx={{ my: 2 }}>
-                        <Typography variant="body2" gutterBottom>
-                            Select import type:
-                        </Typography>
-                        <Grid container spacing={2}>
-                            {importOptions.map((option) => (
-                                <Grid item xs={12} sm={6} key={option.type}>
-                                    <Card
-                                        sx={{
-                                            cursor: 'pointer',
-                                            border: importType === option.type ? '2px solid' : '1px solid',
-                                            borderColor: importType === option.type ? 'primary.main' : 'divider',
-                                        }}
-                                        onClick={() => setImportType(option.type)}
-                                    >
-                                        <CardContent>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                                {option.icon}
-                                                <Typography variant="h6" sx={{ ml: 1 }}>
-                                                    {option.title}
-                                                </Typography>
-                                            </Box>
-                                            <Typography variant="body2" color="textSecondary">
-                                                {option.description}
-                                            </Typography>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Box>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <Box>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept=".xlsx,.xls"
-                            onChange={handleFileSelect}
-                            style={{ display: 'none' }}
-                        />
-                        <Button
-                            variant="outlined"
-                            onClick={() => fileInputRef.current?.click()}
-                            fullWidth
-                        >
-                            {selectedFile ? selectedFile.name : 'Choose File'}
-                        </Button>
-                        {selectedFile && (
-                            <Chip
-                                label={`${(selectedFile.size / 1024).toFixed(2)} KB`}
-                                size="small"
-                                sx={{ mt: 1 }}
-                            />
-                        )}
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenImportDialog(false)}>Cancel</Button>
-                    <Button
-                        variant="contained"
-                        onClick={handleImport}
-                        disabled={!selectedFile || loading}
-                        startIcon={loading ? <CircularProgress size={20} /> : <UploadIcon />}
+                {result && (
+                    <Alert
+                        severity={result.success ? 'success' : 'error'}
+                        onClose={() => setResult(null)}
+                        sx={{ borderRadius: '8px' }}
                     >
-                        Import
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        {result.message}
+                        {result.records_imported > 0 && (
+                            <div style={{ marginTop: '4px', fontSize: '0.875rem' }}>
+                                Records imported: {result.records_imported}
+                                {result.records_failed > 0 && ` | Failed: ${result.records_failed}`}
+                            </div>
+                        )}
+                    </Alert>
+                )}
 
-            {/* Export Dialog */}
-            <Dialog open={openExportDialog} onClose={() => setOpenExportDialog(false)} maxWidth="md" fullWidth>
-                <DialogTitle>Export to Excel</DialogTitle>
-                <DialogContent>
-                    <Typography variant="body2" gutterBottom sx={{ mb: 2 }}>
-                        Select the type of data you want to export:
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {exportOptions.map((option) => (
-                            <Grid item xs={12} sm={6} key={option.type}>
-                                <Card>
-                                    <CardContent>
-                                        <Typography variant="h6" gutterBottom>
-                                            {option.title}
-                                        </Typography>
-                                        <Typography variant="body2" color="textSecondary" paragraph>
-                                            {option.description}
-                                        </Typography>
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            startIcon={<DownloadIcon />}
-                                            onClick={() => handleExport(option.type)}
-                                            disabled={loading}
-                                            fullWidth
-                                        >
-                                            Export
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenExportDialog(false)}>Close</Button>
-                </DialogActions>
-            </Dialog>
-        </Box>
+                <div className={styles.cardsRow}>
+                    <ActionCard
+                        title="Import Data"
+                        description="Upload Excel files to import your component inventory or production data seamlessly."
+                        icon={<UploadIcon />}
+                        buttonText="Import from Excel"
+                        buttonVariant="primary"
+                        onClick={() => setOpenImportDialog(true)}
+                    />
+
+                    <ActionCard
+                        title="Export Data"
+                        description="Download detailed inventory, consumption, and production reports in Excel format."
+                        icon={<DownloadIcon />}
+                        buttonText="Export to Excel"
+                        buttonVariant="success"
+                        onClick={() => setOpenExportDialog(true)}
+                    />
+                </div>
+
+                <GuidelinesSection />
+
+            </div>
+
+            <ImportModal
+                open={openImportDialog}
+                onClose={() => setOpenImportDialog(false)}
+                importType={importType}
+                setImportType={setImportType}
+                selectedFile={selectedFile}
+                handleFileSelect={handleFileSelect}
+                handleImport={handleImport}
+                loading={loading}
+            />
+
+            <ExportModal
+                open={openExportDialog}
+                onClose={() => setOpenExportDialog(false)}
+                handleExport={handleExport}
+                loading={loading}
+            />
+        </div>
     );
 };
 
