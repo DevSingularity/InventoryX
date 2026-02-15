@@ -143,7 +143,7 @@ const Dashboard = () => {
       <section className="card p-6 md:p-8 border-primary-100 bg-linear-to-r from-primary-100 via-primary-50 to-secondary-50">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
-            <h1 className="text-3xl md:text-4xl font-bold text-secondary-900 tracking-tight">Dashboard Overview</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-secondary-900 tracking-tight">InventoryX Dashboard</h1>
             <p className="text-secondary-600 max-w-2xl">
               Unified monitoring for inventory health, production throughput, and procurement lifecycle.
             </p>

@@ -1,5 +1,5 @@
 export const APP_CONFIG = {
-  APP_NAME: import.meta.env.VITE_APP_NAME || 'Inventory Management System',
+  APP_NAME: import.meta.env.VITE_APP_NAME || 'InventoryX',
   TOKEN_KEY: 'ims_token',
   USER_KEY: 'ims_user',
   MOCK_API_DELAY: 800,

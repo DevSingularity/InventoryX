@@ -2,6 +2,7 @@ import { LogOut, User, LayoutDashboard, Package, Users, Cpu, Factory, BarChart2,
 import { NavLink } from 'react-router-dom';
 import { useAuth, useRole } from '../../hooks';
 import { APP_CONFIG, ROUTES } from '../../constants';
+import logo1 from '../../assets/logo1.png';
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -12,9 +13,12 @@ const Header = () => {
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-12">
-            <h1 className="text-2xl font-bold text-primary">
-              {APP_CONFIG.APP_NAME}
-            </h1>
+            <div className="flex items-center gap-3">
+              <img src={logo1} alt="InventoryX logo" className="h-12 w-12 rounded-lg object-contain" />
+              <h1 className="text-2xl font-bold text-primary-700">
+                {APP_CONFIG.APP_NAME}
+              </h1>
+            </div>
 
             <nav className="hidden md:flex items-center gap-6">
               <NavLink
