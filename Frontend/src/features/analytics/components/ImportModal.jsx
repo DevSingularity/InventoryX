@@ -31,13 +31,19 @@ const ImportModal = ({
             type: 'components',
             title: 'Component Inventory',
             description: 'Import component master data with part numbers, quantities, and requirements',
-            icon: <Description sx={{ color: importType === 'components' ? '#3B82F6' : '#64748B' }} />,
+            icon: <Description sx={{ color: importType === 'components' ? '#2563EB' : '#64748B' }} />,
+        },
+        {
+            type: 'pcb_master_bom',
+            title: 'PCB Master + BOM Mapping',
+            description: 'Bulk import PCB master and component-to-PCB BOM mapping in one file',
+            icon: <Assessment sx={{ color: importType === 'pcb_master_bom' ? '#2563EB' : '#64748B' }} />,
         },
         {
             type: 'pcb_production',
             title: 'PCB Production Data',
             description: 'Import production records with batch numbers and quantities',
-            icon: <Assessment sx={{ color: importType === 'pcb_production' ? '#3B82F6' : '#64748B' }} />,
+            icon: <Assessment sx={{ color: importType === 'pcb_production' ? '#2563EB' : '#64748B' }} />,
         },
     ];
 

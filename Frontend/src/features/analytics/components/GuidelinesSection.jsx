@@ -19,6 +19,15 @@ const GuidelinesSection = () => {
                 <div className={styles.guidelineItem}>
                     <CheckCircle className={styles.checkIcon} fontSize="small" />
                     <div className={styles.guidelineContent}>
+                        <div className={styles.guidelineHeading}>PCB Master + BOM Import</div>
+                        <div className={styles.guidelineText}>
+                            Required columns: PCB Code, PCB Name, Component Part Number, Quantity Per PCB
+                        </div>
+                    </div>
+                </div>
+                <div className={styles.guidelineItem}>
+                    <CheckCircle className={styles.checkIcon} fontSize="small" />
+                    <div className={styles.guidelineContent}>
                         <div className={styles.guidelineHeading}>PCB Production Import</div>
                         <div className={styles.guidelineText}>
                             Required columns: PCB Code, Quantity Produced, Production Date, Batch Number
