@@ -251,6 +251,21 @@ cd Backend
 psql -U postgres -d inventoryx -f schema.sql
 ```
 
+### Render Postgres Reset
+
+If you are using Render Postgres and want to clear the database before reloading the schema, run:
+
+```bash
+psql "postgresql://<user>:<password>@<host>/<database>?sslmode=require" -c "DO $$ DECLARE r RECORD; BEGIN FOR r IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' LOOP EXECUTE 'TRUNCATE TABLE public.' || quote_ident(r.tablename) || ' RESTART IDENTITY CASCADE'; END LOOP; END $$;"
+```
+
+To drop and recreate the schema before applying `schema.sql` again:
+
+```bash
+psql "postgresql://<user>:<password>@<host>/<database>?sslmode=require" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+psql "postgresql://<user>:<password>@<host>/<database>?sslmode=require" -f schema.sql
+```
+
 ### Enable UUID Extension
 
 ```sql
@@ -265,6 +280,9 @@ Create a `.env` file inside `Backend/`:
 
 ```env
 PORT=5000
+
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>
+DB_SSL=true
 
 DB_HOST=localhost
 DB_PORT=5432
